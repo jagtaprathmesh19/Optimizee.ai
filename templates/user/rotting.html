@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+    <title>Banana Ripeness Detection</title>
+    <style>
+        /* Center and size the video feed */
+        .video-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .video-feed {
+            width: 80%;
+            max-width: 800px; /* Increase max width to make it bigger */
+            border: 2px solid grey;
+            border-radius: 10px;
+        }
+
+ 
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center">
+                <h1>Food Quality Detection</h1>
+            
+                <!-- Alert Notification -->
+                <div class="alert alert-primary alert-dismissible fade show text-white d-inline-block" role="alert" id="primaryAlert" style="display: none;">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>Attention!</strong> Banana is closer to expiry date.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+    <div class="video-container">
+        <img src="{% url 'video_feed' %}" alt="Video feed" class="video-feed">
+    </div>
+
+
+   
+<script>
+    // Display the alert notification after 6 seconds
+    setTimeout(() => {
+        document.getElementById('primaryAlert').style.display = 'block';
+    }, 6000);
+</script>
+{% endblock content %}

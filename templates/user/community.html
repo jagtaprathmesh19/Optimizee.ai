@@ -1,0 +1,157 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+<div
+  class="container d-flex justify-content-center align-items-center flex-column"
+  style="min-height: 100vh"
+>
+  <!-- Trending Recipe Card -->
+  <div class="card my-3" style="width: 600px">
+    <div class="card-body">
+      <div class="card card-blog card-plain">
+        <div class="position-relative">
+          <a class="d-block blur-shadow-image">
+            <img
+              src="{% static 'assets/uploads/biryani.png'%}"
+              alt="recipe-img"
+              class="img-fluid shadow border-radius-lg"
+            />
+          </a>
+        </div>
+        <div class="card-body px-4 pt-4">
+          <p
+            class="text-gradient text-primary font-weight-bold text-sm text-uppercase"
+          >
+            Trending Recipe
+          </p>
+          <a href="javascript:;">
+            <h4 class="text-center">Leftover Veggie Stir-Fry</h4>
+          </a>
+          <p class="text-center">
+            Transform leftover veggies into a delicious stir-fry in minutes!
+            Reduce waste by using those last bits in your fridge.
+          </p>
+          <div class="text-center">
+            <button type="button" class="btn bg-gradient-primary mt-3">
+              See Recipe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Surplus Food Availability Card -->
+  <div class="card my-3" style="width: 600px">
+    <div class="card-body">
+      <div class="card card-blog card-plain">
+        <div class="position-relative">
+          <a class="d-block blur-shadow-image">
+            <img
+              src="{% static 'assets/uploads/surplus.png'%}"
+              alt="surplus-food-img"
+              class="img-fluid shadow border-radius-lg"
+            />
+          </a>
+        </div>
+        <div class="card-body px-4 pt-4">
+          <p
+            class="text-gradient text-warning font-weight-bold text-sm text-uppercase"
+          >
+            Surplus Food Available
+          </p>
+          <a href="javascript:;">
+            <h4 class="text-center">Surplus Food Details</h4>
+          </a>
+          <div class="text-center">
+            <ul class="list-unstyled">
+              <li><strong>Food Name:</strong> Rice & Lentil Soup</li>
+              <li>
+                <strong>Location:</strong> Community Kitchen - Main Street
+              </li>
+              <li><strong>Quantity:</strong> 5 large containers</li>
+              <li><strong>Expiry:</strong> 2 days left</li>
+            </ul>
+            <div class="text-center">
+              <button type="button" class="btn bg-gradient-warning mt-3">
+                Donate Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How to Save Food Wastage Card -->
+  <div class="card my-3" style="width: 600px">
+    <div class="card-body">
+      <div class="card card-blog card-plain">
+        <div class="position-relative">
+          <a class="d-block blur-shadow-image">
+            <img
+              src="{% static 'assets/uploads/waste.png'%}"
+              alt="save-food-img"
+              class="img-fluid shadow border-radius-lg"
+            />
+          </a>
+        </div>
+        <div class="card-body px-4 pt-4">
+          <p
+            class="text-gradient text-success font-weight-bold text-sm text-uppercase"
+          >
+            Food Waste Tips
+          </p>
+          <a href="javascript:;">
+            <h4 class="text-center">Store Your Food Wisely</h4>
+          </a>
+          <p class="text-center">
+            Organize your fridge with older items in front, freeze perishables,
+            and keep track of expiration dates to avoid waste.
+          </p>
+          <div class="text-center">
+            <button type="button" class="btn bg-gradient-success mt-3">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Community Impact Card -->
+  <div class="card my-3" style="width: 600px">
+    <div class="card-body">
+      <div class="card card-blog card-plain">
+        <div class="position-relative">
+          <a class="d-block blur-shadow-image">
+            <img
+              src="{% static 'assets/uploads/foodwaste.png'%}"
+              alt="community-img"
+              class="img-fluid shadow border-radius-lg"
+            />
+          </a>
+        </div>
+        <div class="card-body px-4 pt-4">
+          <p
+            class="text-gradient text-info font-weight-bold text-sm text-uppercase"
+          >
+            Community Updates
+          </p>
+          <a href="javascript:;">
+            <h4 class="text-center">Your Impact on Reducing Waste</h4>
+          </a>
+          <p class="text-center">
+            Join our community to track and share the collective impact of food
+            waste reduction efforts. Together, we make a difference!
+          </p>
+          <div class="text-center">
+            <button type="button" class="btn bg-gradient-info mt-3">
+              Join Community
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

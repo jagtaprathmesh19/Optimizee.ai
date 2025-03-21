@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card w-75">
+        <div class="card-body">
+    <h2>Food Donation Form</h2>
+
+    <!-- Displaying success/error messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form class="container" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="food_name">Food Name</label>
+            <input type="text" class="form-control" id="food_name" name="food_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Quantity (servings or weight)</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select class="form-control" id="category" name="category" required>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Dessert">Dessert</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="expiry_date">Expiry Date</label>
+            <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+        </div>
+
+        <div class="form-group">
+            <label for="food_image">Food Image (optional)</label>
+            <input type="file" class="form-control-file btn btn-outline-primary w-25" id="food_image" name="food_image">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-2">Submit Donation</button>
+    </form>
+</div>
+{% endblock %}

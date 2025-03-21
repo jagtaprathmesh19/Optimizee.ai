@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Food Bank Locator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🍱 Food Bank Locator</h1>
+        <p>Find food banks near you and get walking directions</p>
+
+        <form id="location-form">
+            <div class="form-group">
+                <label for="user_address">Enter your address:</label>
+                <input type="text" id="user_address" name="user_address" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="max_distance">Maximum distance (km):</label>
+                <input type="range" id="max_distance" name="max_distance" min="1" max="20" value="5" class="form-control-range">
+            </div>
+            <div class="form-group">
+                <label for="selected_food_bank">Select a food bank:</label>
+                <select id="selected_food_bank" name="selected_food_bank" class="form-control">
+                    {% for bank in food_banks %}
+                    <option value="{{ bank }}">{{ bank }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" id="submit_button" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div id="map" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#submit_button").click(function() {
+                $.ajax({
+                    url: "{% url 'generate_map' %}",
+                    type: "POST",
+                    data: {
+                        user_address: $("#user_address").val(),
+                        max_distance: $("#max_distance").val(),
+                        selected_food_bank: $("#selected_food_bank").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $("#map").html(response.map_html);
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("An error occurred while processing your request.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

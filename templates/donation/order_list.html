@@ -1,0 +1,36 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container my-4">
+  <h2 class="text-center">Available Food Donations</h2>
+  <div class="row">
+    {% for donation in donations %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        {% if donation.food_image %}
+        <img
+          src="{{ donation.food_image.url }}"
+          class="card-img-top"
+          alt="{{ donation.food_name }}"
+          style="max-height: 250px; object-fit: cover"
+        />
+        {% else %}
+        <img
+          src="https://via.placeholder.com/300x200"
+          class="card-img-top"
+          alt="No Image Available"
+        />
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ donation.food_name }}</h5>
+          <p class="card-text">Category: {{ donation.category }}</p>
+          <p class="card-text">Quantity: {{ donation.quantity }} servings</p>
+          <p class="card-text">Expiry Date: {{ donation.expiry_date }}</p>
+          <p class="card-text">Location: {{ donation.location }}</p>
+          <a href="#" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

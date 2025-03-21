@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spline Viewer with Animated Pop-Up</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Main content area */
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        /* The overlay on the right */
+        .overlay {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.9); /* Brighter overlay */
+            color: black;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .category {
+            margin-bottom: 20px;
+        }
+
+        .category h2 {
+            color: #f39c12;
+            font-size: 1.5em;
+        }
+
+        .category ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .category ul li {
+            background-color: #34495e;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        /* The animated pop-up */
+        .pop-up {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            background-color: #f39c12;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            animation: popUpAnim 5s ease-in-out infinite;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        /* Keyframes for pop-up animation */
+        @keyframes popUpAnim {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            30% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main content area with the Spline Viewer -->
+    <div class="viewer-container">
+        <!-- Load the Spline Viewer script -->
+        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.37/build/spline-viewer.js"></script>
+        <!-- Embed the Spline scene viewer -->
+        <spline-viewer url="https://prod.spline.design/TlqkLfl6LJmJZFj4/scene.splinecode"></spline-viewer>
+    </div>
+s
+
+    <!-- Animated pop-up message -->
+    <div class="pop-up" id="popUpMessage">
+        Vegetables and fruits should always be kept separate for lasting longer!
+    </div>
+
+    <script>
+        // Show the pop-up message continuously
+        window.onload = function() {
+            var popUpMessage = document.getElementById('popUpMessage');
+            popUpMessage.style.display = 'block';
+        };
+    </script>
+
+</body>
+</html>
