@@ -31,11 +31,40 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class AppUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = AppUser
-        fields = ("user", "phone_number", "address", "allergies")
+        fields = ["user", "phone_number", "address", "allergies"]
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """Serializer to combine User & AppUser data"""
+
+    profile = AppUserSerializer()  # Nested serializer for additional profile fields
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "first_name", "last_name", "profile"]
+
+    def update(self, instance, validated_data):
+        """
+        Custom update method to handle both User and AppUser updates.
+        """
+        profile_data = validated_data.pop("profile", {})
+
+        # Update User model fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update AppUser model fields
+        profile, created = AppUser.objects.get_or_create(user=instance)
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+
+        return instance
 
 
 class LoginSerializer(serializers.Serializer):

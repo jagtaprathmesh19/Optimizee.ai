@@ -7,12 +7,17 @@ from dotenv import load_dotenv
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse, StreamingHttpResponse
-from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    authentication_classes,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import FoodItem, DetectedObject
 from .serializers import FoodItemSerializer, DetectedObjectSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from ultralytics import YOLO
 
@@ -52,7 +57,9 @@ def index(request):
     return render(request, "base.html")
 
 
-@login_required
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def upload_image_and_voice(request):
     if request.method == "POST":
         food_name = request.POST.get("food_name", "")
@@ -79,7 +86,9 @@ def upload_image_and_voice(request):
     return render(request, "user/voice_input_form.html")
 
 
-@login_required
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def dashboard(request):
     food_items = FoodItem.objects.filter(user=request.user)
     for item in food_items:
@@ -95,7 +104,9 @@ def dashboard_data(request):
     return Response({"food_items": serializer.data})
 
 
-@login_required
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def video_feed(request):
     def gen_frames():
         cap = cv2.VideoCapture(0)
@@ -128,6 +139,7 @@ def video_feed(request):
 
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def detected_objects(request):
     objects = DetectedObject.objects.filter(user=request.user)
@@ -135,20 +147,29 @@ def detected_objects(request):
     return Response(serializer.data)
 
 
-@login_required
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def detect(request):
     return render(request, "user/fruit_detection.html")
 
 
-@login_required
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def community(request):
     return render(request, "user/community.html")
 
 
-@login_required
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def recipe_slider(request):
     return render(request, "user/recipee_slider.html")
 
 
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def rotting_index(request):
     return render(request, "user/rotting.html")

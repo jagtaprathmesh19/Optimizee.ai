@@ -102,7 +102,7 @@
               <form id="signupForm" role="form">
                 <div class="mb-3">
                   <input type="text" id="username" class="form-control" placeholder="Username" aria-label="Username"
-                    name="username" required />
+                    name="username" autocomplete="username" required />
                 </div>
                 <div class="mb-3">
                   <input type="email" id="email" class="form-control" placeholder="Email" aria-label="Email"
@@ -110,7 +110,7 @@
                 </div>
                 <div class="mb-3">
                   <input type="password" class="form-control" id="password" placeholder="Password" aria-label="Password"
-                    name="password" required />
+                    name="password" autocomplete="current-password" required />
                   <small id="passwordHelp" class="form-text text-muted d-none">
                     Password must contain uppercase, lowercase, special
                     character and be 8-16 characters long.
@@ -210,12 +210,12 @@
           });
 
           data = await response.json();
-          console.error("------------------", data)
           if (response.ok) {
-            console.error("Got the tokens")
             sessionStorage.setItem("access_token", data.access_token);
-            sessionStorage.setItem("refresh_token", data.refresh_token);
-            window.location.href = "/auth/profile/"; // Redirect after signup
+            document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; HttpOnly; SameSite=Strict`;
+            setTimeout(() => {
+                window.location.href = "/auth/profile/";
+            }, 500);
           } else {
             displayErrors(data);
           }
