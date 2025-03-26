@@ -6,8 +6,18 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserRegistrationSerializer, LoginSerializer, AppUserSerializer
+from .serializers import (
+    UserRegistrationSerializer,
+    LoginSerializer,
+    ProfileSerializer,
+)
+from rest_framework.decorators import (
+    permission_classes,
+    authentication_classes,
+)
 from .models import AppUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -17,9 +27,6 @@ class RegisterAPIView(APIView):
     """User Registration API"""
 
     def post(self, request):
-        logger.warning(
-            "********************Entered into the registerview************************"
-        )
         try:
             serializer = UserRegistrationSerializer(data=request.data)
             if serializer.is_valid():
@@ -95,6 +102,7 @@ class LoginAPIView(APIView):
 class LogoutAPIView(APIView):
     """User Logout API"""
 
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -127,22 +135,16 @@ class LogoutAPIView(APIView):
 class ProfileView(APIView):
     """User Profile API"""
 
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
-            user_profile = AppUser.objects.get(user=request.user)
-            serializer = AppUserSerializer(user_profile)
+            user = request.user
+            serializer = ProfileSerializer(user)
             logger.info(f"User profile fetched: {request.user.username}")
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-        except AppUser.DoesNotExist:
-            logger.warning(f"Profile not found for user: {request.user.username}")
-            return Response(
-                {"error": "User profile not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
 
         except Exception as e:
             logger.error(f"Error fetching profile: {str(e)}", exc_info=True)
@@ -150,6 +152,33 @@ class ProfileView(APIView):
                 {"error": "An error occurred while fetching the profile"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    def put(self, request):
+        try:
+            user = request.user
+            serializer = ProfileSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                logger.info(f"User profile updated: {request.user.username}")
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            logger.warning(f"Profile update failed: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(f"Error updating profile: {str(e)}", exc_info=True)
+            return Response(
+                {"error": "An error occurred while updating the profile"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def profile_page(request):
+    """Render profile.html template"""
+    return render(request, "user/profile.html")
 
 
 def login_view(request):

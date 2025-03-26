@@ -113,9 +113,16 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ["Bearer"],
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),  # minutes=5
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # days=1
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Short expiry
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),  # Refresh lasts longer
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_COOKIE": "access_token",  # Store access token in cookies (Optional)
+    "AUTH_COOKIE_REFRESH": "refresh_token",  # Securely store refresh token
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Prevent JavaScript access
+    "AUTH_COOKIE_SECURE": True,  # Send only over HTTPS
+    "AUTH_COOKIE_SAMESITE": "Lax",  # Protect against CSRF
 }
 
 
@@ -167,6 +174,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_URL = "/auth/login/"
+LOGIN_REDIRECT_URL = "user/dashboard/"
+LOGOUT_REDIRECT_URL = "/auth/login/"
 
 # Loggings
 
