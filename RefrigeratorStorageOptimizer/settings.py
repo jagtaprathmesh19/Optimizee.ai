@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "authapp",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 CSRF_TRUSTED_ORIGINS = []
@@ -55,10 +56,11 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "authapp.middleware.SecurityHeadersMiddleware",
 ]
 
 ROOT_URLCONF = "RefrigeratorStorageOptimizer.urls"
@@ -110,11 +112,18 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10,
+    "DEFAULT_THROTTLE_CLASSES": [],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "5/minute",  # 5 requests per minute for anonymous users
+        "auth": "20/minute",  # 20 requests per minute for authenticated users
+        "login": "5/minute",  # Specific rate for login attempts
+        "register": "3/minute",  # Limit registration attempts
+    },
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Short expiry
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),  # Refresh lasts longer
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh lasts longer
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
@@ -122,7 +131,12 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_REFRESH": "refresh_token",  # Securely store refresh token
     "AUTH_COOKIE_HTTP_ONLY": True,  # Prevent JavaScript access
     "AUTH_COOKIE_SECURE": True,  # Send only over HTTPS
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Protect against CSRF
+    "JTI_CLAIM": "jti",
+    "INCLUDE_JTI_CLAIM": True,
+    "UPDATE_LAST_LOGIN": True,
+    "ALGORITHM": "HS256",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
 }
 
 
@@ -175,8 +189,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/auth/login/"
-LOGIN_REDIRECT_URL = "user/dashboard/"
+LOGIN_REDIRECT_URL = "/user/dashboard/"
 LOGOUT_REDIRECT_URL = "/auth/login/"
+LOGOUT_REDIRECT_URL = "/user/index/"
 
 # Loggings
 
@@ -193,11 +208,11 @@ LOGGING = {
     "disable_existing_loggers": False,  # Allows the use of Django's built-in loggers
     "formatters": {
         "verbose": {
-            "format": "{asctime} | {levelname} | {name} | {filename}:{lineno} | {message}",
+            "format": "{asctime} | {levelname} | {name} | {module}:{filename}:{lineno} | {message}",
             "style": "{",
         },
         "simple": {
-            "format": "{levelname}| {name} | {filename}:{lineno}: {message}",
+            "format": "{asctime} | {levelname}| {name} | {filename}:{lineno}: {message}",
             "style": "{",
         },
     },
@@ -208,7 +223,7 @@ LOGGING = {
             "formatter": "simple",
         },
         "file": {  # Logs to a file (useful for production)
-            "level": "WARNING",
+            "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "django.log"),
             "maxBytes": 1024 * 1024 * 5,  # Rotate logs after 5MB
@@ -235,7 +250,7 @@ LOGGING = {
         },
         "myapp": {  # Custom application-level logging
             "handlers": ["console", "file"],
-            "level": "DEBUG",
+            "level": LOG_LEVEL,
             "propagate": False,
         },
     },

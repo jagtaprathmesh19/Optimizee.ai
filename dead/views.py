@@ -19,7 +19,7 @@ from shapely.geometry import Point
 from geopy.distance import geodesic
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("myapp")
 
 # Initialize the Google Maps client
 gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))

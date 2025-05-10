@@ -54,12 +54,6 @@ class FoodItem(models.Model):
             self.status = "expiring_soon"  # Mark as expiring soon if within 2 days
         super().clean()
 
-    def save(self, *args, **kwargs):
-        """Auto-sets expiration date if not provided."""
-        if not self.expiration_date:
-            self.expiration_date = default_expiration(self.category)
-        super().save(*args, **kwargs)
-
     def update_status(self):
         """Automatically updates the status based on the expiration date."""
         if self.expiration_date:
@@ -72,13 +66,13 @@ class FoodItem(models.Model):
                 self.status = "fresh"
         self.save()
 
-    def days_until_expiry(self):
-        """Returns the number of days until expiration."""
-        return (
-            (self.expiration_date - timezone.now().date()).days
-            if self.expiration_date
-            else None
-        )
+    # def days_until_expiry(self):
+    #     """Returns the number of days until expiration."""
+    #     return (
+    #         (self.expiration_date - timezone.now().date()).days
+    #         if self.expiration_date
+    #         else None
+    #     )
 
 
 class FoodItemPurchase(models.Model):

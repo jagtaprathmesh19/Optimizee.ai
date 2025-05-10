@@ -5,6 +5,7 @@ from PIL import Image
 from dotenv import load_dotenv
 
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse, StreamingHttpResponse
 from rest_framework.decorators import (
@@ -27,7 +28,7 @@ import google.generativeai as genai
 load_dotenv()
 
 # set up logging for debuggind
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("myapp")
 
 # Configure Gemini API
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -60,6 +61,7 @@ def index(request):
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
+@csrf_exempt
 def upload_image_and_voice(request):
     if request.method == "POST":
         food_name = request.POST.get("food_name", "")
@@ -80,7 +82,7 @@ def upload_image_and_voice(request):
                 image=uploaded_image,
             )
             return JsonResponse(
-                {"expiry_date": expiry_date, "redirect_url": "/dashboard"}
+                {"expiry_date": expiry_date, "redirect_url": "/user/dashboard"}
             )
 
     return render(request, "user/voice_input_form.html")
@@ -90,21 +92,31 @@ def upload_image_and_voice(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def dashboard(request):
-    food_items = FoodItem.objects.filter(user=request.user)
-    for item in food_items:
-        item.update_status()
-    return render(request, "user/dashboard.html", {"food_items": food_items})
+    food_items = ...
+    try:
+        food_items = FoodItem.objects.get(user=request.user.id)
+        for item in food_items:
+            item.update_status()
+
+        return render(request, "/user/dashboard.html", {"food_items": food_items})
+    except FoodItem.DoesNotExist:
+        logger.error(f"The user not found : {request.user.username}")
+        raise Warning("User not Found!")
 
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def dashboard_data(request):
-    food_items = FoodItem.objects.filter(user=request.user)
-    serializer = FoodItemSerializer(food_items, many=True)
-    return Response({"food_items": serializer.data})
+    try:
+        food_items = FoodItem.objects.get(user=request.user.id)
+        serializer = FoodItemSerializer(food_items, many=True)
+        return Response({"food_items": serializer.data})
+    except FoodItem.DoesNotExist:
+        logger.error(f"The user not found : {request.user.username}")
+        raise Warning("User not Found!")
 
 
-@api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def video_feed(request):

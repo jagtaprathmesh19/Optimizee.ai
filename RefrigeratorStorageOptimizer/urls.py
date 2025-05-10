@@ -19,18 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
+from django.shortcuts import redirect
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("user/", include("user.urls")),
-    path("donation/", include("donation.urls")),
-    path("dead/", include("dead.urls")),
-    path("auth/", include("authapp.urls")),
-    # JWT refresh token
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("user/", include("user.urls", namespace="user")),
+    path("donation/", include("donation.urls", namespace="donation")),
+    path("dead/", include("dead.urls", namespace="dead")),
+    path("auth/", include("authapp.urls", namespace="authapp")),
+    path("", lambda request: redirect("auth/register/"), name="home"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

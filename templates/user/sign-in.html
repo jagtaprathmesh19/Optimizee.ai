@@ -17,7 +17,17 @@
       type="image/png"
       href="{% static 'assets/img/favicon.png' %}"
     />
-    <title>Optimizee.ai- Sign In</title>
+    <title>Optimizee.ai - Sign In</title>
+
+    <!-- Security headers -->
+    {% comment %}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://kit.fontawesome.com https://buttons.github.io; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://raw.githubusercontent.com data:;"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    {% endcomment %}
+
     <!--     Fonts and icons     -->
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -43,95 +53,6 @@
   </head>
 
   <body class="">
-    {% comment %}
-    <div class="container position-sticky z-index-sticky top-0">
-      <div class="row">
-        <div class="col-12">
-          <!-- Navbar -->
-          <nav
-            class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow position-absolute mt-4 py-2 start-0 end-0 mx-4"
-          >
-            <div class="container-fluid">
-              <a
-                class="navbar-brand font-weight-bolder ms-lg-0 ms-3"
-                href="{% static './user/dashboard.html"
-              >
-                Optimizee.ai
-              </a>
-              <button
-                class="navbar-toggler shadow-none ms-2"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navigation"
-                aria-controls="navigation"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span class="navbar-toggler-icon mt-2">
-                  <span class="navbar-toggler-bar bar1"></span>
-                  <span class="navbar-toggler-bar bar2"></span>
-                  <span class="navbar-toggler-bar bar3"></span>
-                </span>
-              </button>
-              <div class="collapse navbar-collapse" id="navigation">
-                <ul class="navbar-nav mx-auto">
-                  <li class="nav-item">
-                    <a
-                      class="nav-link d-flex align-items-center me-2 active"
-                      aria-current="page"
-                      href="{% static 'pages/dashboard.html"
-                    >
-                      <i class="fa fa-chart-pie opacity-6 text-dark me-1"></i>
-                      Dashboard
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="nav-link me-2"
-                      href="{% static 'pages/profile.html"
-                    >
-                      <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                      Profile
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="nav-link me-2"
-                      href="{% static 'pages/sign-up.html"
-                    >
-                      <i
-                        class="fas fa-user-circle opacity-6 text-dark me-1"
-                      ></i>
-                      Sign Up
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="nav-link me-2"
-                      href="{% static 'pages/sign-in.html"
-                    >
-                      <i class="fas fa-key opacity-6 text-dark me-1"></i>
-                      Sign In
-                    </a>
-                  </li>
-                </ul>
-                <ul class="navbar-nav d-lg-block d-none">
-                  <li class="nav-item">
-                    <a
-                      href="https://www.creative-tim.com/product/argon-dashboard"
-                      class="btn btn-sm mb-0 me-1 btn-primary"
-                      >Free Download</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-          <!-- End Navbar -->
-        </div>
-      </div>
-    </div>
-    {% endcomment %}
     <main class="main-content mt-0">
       <section>
         <div class="page-header min-vh-100">
@@ -152,39 +73,54 @@
                           type="text"
                           id="username"
                           class="form-control form-control-lg"
-                          placeholder="Username"
+                          placeholder="Username or Email"
                           aria-label="Username"
                           autocomplete="username"
+                          autofocus
                           required
                         />
                       </div>
-                      <div class="mb-3">
+                      <div class="mb-3 position-relative">
                         <input
                           type="password"
                           id="password"
                           class="form-control form-control-lg"
                           placeholder="Password"
+                          name="password"
                           autocomplete="current-password"
                           aria-label="Password"
+                          required
                         />
+                        <span
+                          class="position-absolute end-0 top-0 mt-3 me-3 password-toggle"
+                          style="cursor: pointer; z-index: 2"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </span>
                       </div>
-                      <div class="form-check form-switch">
+                      <div class="form-check form-switch mb-3">
                         <input
                           class="form-check-input"
                           type="checkbox"
                           id="rememberMe"
+                          name="remember_me"
                         />
                         <label class="form-check-label" for="rememberMe"
                           >Remember me</label
                         >
                       </div>
-                      <p id="loginMessage" class="text-danger text-center"></p>
+                      <p id="loginMessage" class="text-center"></p>
                       <div class="text-center">
                         <button
                           type="submit"
                           class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0"
+                          id="submitBtn"
                         >
                           Sign in
+                          <span
+                            class="spinner-border spinner-border-sm d-none"
+                            id="spinner"
+                          ></span>
                         </button>
                       </div>
                     </form>
@@ -196,6 +132,13 @@
                         href="{% url 'authapp:register' %}"
                         class="text-primary text-gradient font-weight-bold"
                         >Sign up</a
+                      >
+                    </p>
+                    <p class="mb-0 text-sm">
+                      <a
+                        href="/auth/password-reset/"
+                        class="text-primary text-gradient font-weight-bold"
+                        >Forgot password?</a
                       >
                     </p>
                   </div>
@@ -218,8 +161,8 @@
                     "Food Is Life"
                   </h4>
                   <p class="text-white position-relative">
-                    The more effortless your doantion, the more effort the
-                    writer actually put into the process.
+                    The more effortless your donation, the more effort we put
+                    into making it count.
                   </p>
                 </div>
               </div>
@@ -243,39 +186,96 @@
         };
         Scrollbar.init(document.querySelector("#sidenav-scrollbar"), options);
       }
-    </script>
-    <script>
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent form reload
 
-          let username = document.getElementById("username").value.trim();
-          let password = document.getElementById("password").value.trim();
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const passwordToggle = document.querySelector(".password-toggle");
+        const submitBtn = document.getElementById("submitBtn");
+        const spinner = document.getElementById("spinner");
+        const loginMessage = document.getElementById("loginMessage");
 
-          try {
-            let response = await fetch("/auth/api/login/", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username, password }),
-            });
+        // Redirect already authenticated users
+        if (Auth.isAuthenticated()) {
+          window.location.href = "{% url 'authapp:profile' %}";
+          return;
+        }
 
-            let data = await response.json();
+        // Password visibility toggle
+        passwordToggle.addEventListener("click", function () {
+          const icon = this.querySelector("i");
+          const passwordField = document.getElementById("password");
 
-            if (response.ok) {
-              sessionStorage.setItem("access_token", data.access_token);
-              sessionStorage.setItem("refresh_token", data.refresh_token);
-              window.location.href = "/user/dashboard/"; // Redirect after login
-            } else {
-              document.getElementById("loginMessage").innerText =
-                data.error || "Invalid credentials.";
-            }
-          } catch (error) {
-            console.error("Login error:", error);
-            document.getElementById("loginMessage").innerText =
-              "Something went wrong!";
+          if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+          } else {
+            passwordField.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
           }
         });
+
+        // Form submission
+        loginForm.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          loginForm.classList.add("was-validated");
+
+          if (!loginForm.checkValidity()) return;
+
+          loginMessage.textContent = "";
+
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value.trim();
+          const rememberMe = document.getElementById("rememberMe").checked;
+
+          if (!username || !password) {
+            showMessage("Please enter both username and password", "danger");
+            return;
+          }
+          // Disable button and show spinner
+          submitBtn.disabled = true;
+          spinner.classList.remove("d-none");
+
+          try {
+            // Use Auth service from auth.js
+            const result = await Auth.login(username, password, rememberMe);
+
+            if (result.success) {
+              // Success: redirect to profile page
+              showMessage("Login successful, redirecting...", "success");
+              setTimeout(() => {
+                window.location.href = "{% url 'authapp:profile' %}";
+              }, 500);
+            } else {
+              // Handle error response
+              submitBtn.disabled = false;
+              spinner.classList.add("d-none");
+              showMessage(result.error || "Login failed", "danger");
+            }
+          } catch (error) {
+            // Handle unexpected errors
+            console.error("Login error:", error);
+            submitBtn.disabled = false;
+            spinner.classList.add("d-none");
+            showMessage(
+              "An error occurred during login. Please try again.",
+              "danger"
+            );
+          }
+        });
+
+        // Show status message
+        function showMessage(message, type) {
+          loginMessage.textContent = message;
+          loginMessage.className = `text-center mb-2 small text-${type}`;
+        }
+        // Clear message when input changes
+        const inputs = loginForm.querySelectorAll("input");
+        inputs.forEach((input) => {
+          input.addEventListener("input", () => {
+            loginMessage.textContent = "";
+          });
+        });
+      });
     </script>
 
     <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>

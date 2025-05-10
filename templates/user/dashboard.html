@@ -2,12 +2,13 @@
   {% load static %} 
   {% block content %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'assets/js/auth.js' %}"></script>
 
   <div class="container-fluid py-4">
   <!-- Logout Button -->
-    <div class="d-flex justify-content-end">
+    {% comment %} <div class="d-flex justify-content-end">
       <button id="logoutBtn" class="btn btn-danger">Logout</button>
-    </div>
+    </div> {% endcomment %}
 
     <div class="row">
       <!-- Expiring Soon Card -->
@@ -129,7 +130,7 @@
                         <div class="d-flex px-2 py-1 align-items-center">
                             <div class="d-flex px-2 py-1">
                                 <div>
-                                  <img src="https://media.istockphoto.com/id/995518546/photo/assortment-of-colorful-ripe-tropical-fruits-top-view.jpg?s=612x612&w=0&k=20&c=bz2zksjSPikOYm9I-mG-f8SAQWVpFsR4M_u4K9soLQ0=" class="avatar avatar-sm me-3">
+                                  <img src="{{ item.image }}" class="avatar avatar-sm me-3">
                                 </div>
                           <div class="ms-4">
                             <p class="text-xs font-weight-bold mb-0">Food:</p>
@@ -140,14 +141,14 @@
                       <td>
                         <div class="text-center">
                           <p class="text-xs font-weight-bold mb-0">Expiry Date:</p>
-                          <h6 class="text-sm mb-0">{{ item.expiry_date }}</h6>
+                          <h6 class="text-sm mb-0">{{ item.expiration_date }}</h6>
                         </div>
                       </td>
                       <td>
                         <div class="text-center">
                           <p class="text-xs font-weight-bold mb-0">Status:</p>
                           <h6 class="text-sm mb-0">
-                            <span class="badge {% if item.status == 'expired' %}bg-danger{% elif item.status == 'expiring soon' %}bg-warning{% else %}bg-success{% endif %}">
+                            <span class="badge {% if item.status == 'expired' %}bg-danger{% elif item.status == 'expiring_soon' %}bg-warning{% else %}bg-success{% endif %}">
                               {{ item.status }}
                             </span>
                           </h6>
@@ -160,6 +161,7 @@
             </div>
           </div>
         </div>
+        <!-- Carousel (Right Side) -->
         <div class="col-lg-5">
           <div class="card card-carousel overflow-hidden h-100 p-0">
             <div id="carouselExampleCaptions" class="carousel slide h-100" data-bs-ride="carousel">
@@ -209,6 +211,8 @@
           </div>
         </div>
       </div>
+      <!-- End of Carousel -->
+       <!-- Charts Section -->
       <div class="row mt-4">
         <!-- Bar Chart - Sales by Country (Left Side) -->
         <div class="col-lg-7 mb-lg-0 mb-4">
@@ -248,14 +252,15 @@
   {% endblock content %}
 
   {% block scripts %}
+<script src="{% static 'assets/js/auth.js' %}"></script>
   <script>
-    <script src="{% static 'assets/js/auth.js' %}"></script>
       // Check if user is authenticated
       document.addEventListener("DOMContentLoaded", async function() {
+        console.log("DOM loaded, fetching data...");
           try{
-              let accessToken = getAccessToken();
-              const data = await fetchProtectedData('/user/dashboard-data/', accessToken);
+              const data = await fetchProtectedData('/user/dashboard-data/');
               if (data) {
+                console.log("Received data:", data);
                 document.getElementById("expiring-count").innerText = data.expiring_soon;
                 document.getElementById("waste-prevented").innerText = data.waste_prevented + " kg";
                 document.getElementById("impact").innerText = data.impact + " kg";
@@ -267,12 +272,12 @@
 
           // Logout Functionality
           document.getElementById("logoutBtn").addEventListener("click", async function() {
-              try {
+             try {
                   await logout();
-              } catch (error) {
-                  console.error("Error logging out:", error);
-              }
-          });
+             } catch (error) {
+                 console.error("Error logging out:", error);
+             }
+        });
       });
     </script>
   {% endblock scripts %} 

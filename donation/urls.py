@@ -9,6 +9,8 @@ from .views import (
     generate_route,
 )
 
+app_name = "donation"
+
 urlpatterns = [
     path("donation_form", food_donation_form, name="food_donation_form"),
     path("food-donations/", food_donation_list, name="food_donations_list"),

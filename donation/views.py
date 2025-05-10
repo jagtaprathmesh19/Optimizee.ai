@@ -10,7 +10,7 @@ import logging
 
 from .models import FoodDonation
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("myapp")
 
 
 # Create your views here.

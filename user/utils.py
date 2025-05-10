@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 # set up logging for debuggind
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("myapp")
 
 
 # Twilio Configuration
